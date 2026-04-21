@@ -1,0 +1,257 @@
+<?php 
+  session_start();
+
+  require "config/db.php";
+
+  if(!isset($_SESSION['table_number']) || !isset($_SESSION['outlet_code'])){
+    header("location: " . $BASE_URL . 'access-menu.php');
+    exit;
+  }
+
+  $table_number = $_SESSION['table_number'];
+  $outlet_code = $_SESSION['outlet_code'];
+
+?>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | BurgerGOOD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.css" />
+    <link rel="icon" href="public/logo.png" />
+  </head>
+  <body class="bg-cream">
+    <div
+      class="w-100 justify-content-start align-items-center px-4 d-flex d-lg-none position-relative"
+      style="height: 80px"
+    >
+      <a href="menu.php" class="text-dark big-font">
+        <i class="bi bi-arrow-left-short"></i>
+      </a>
+      <p
+        class="my-0 fredoka-font fs-5 mx-auto position-absolute top-50 start-50 translate-middle"
+      >
+        Order
+      </p>
+    </div>
+
+    <!-- alert -->
+    <div class="position-fixed z-3 alert-main end-0 top-0">
+      <div class="p-2">
+        <div
+          id="alert-payment"
+          class="alert alert-danger d-none justify-content-center align-items-center gap-3"
+          role="alert"
+        >
+          <i class="bi bi-exclamation-octagon"></i>
+          <p class="my-0">Please select a payment method</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <main
+      class="w-100 h-auto px-4 px-lg-5 pt-lg-4 my-1 d-flex flex-column flex-lg-row"
+    >
+      <div
+        class="w-100 d-flex flex-column justify-content-start align-items-start mb-4"
+      >
+        <p class="my-0 fredoka-font fs-5 mb-3">Order List</p>
+        <div class="container-fluid">
+          <div id="menu-section" class="row row-cols-1 g-2 mb-3">
+            <!-- Main card -->
+            <div class="col w-100 d-flex justify-content-center align-items-center">
+              <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a
+          href="menu.php"
+          class="w-100 h-auto bg-white shadow p-3 d-flex align-items-center justify-content-start fredoka-font fs-6 gap-2 rounded-2 text-danger link-underline link-underline-opacity-0"
+        >
+          <i class="bi bi-plus"></i>
+          <p class="my-0">Add Another Item</p>
+        </a>
+      </div>
+
+      <div class="w-100 m-lg-3 mb-3 fredoka-font">
+        <form onsubmit="" id="checkoutForm">
+          <input type="hidden" name="outlet_code" value="<?= $outlet_code;  ?>">
+          <div class="mt-3">
+            <p class="fs-5">Order Summary</p>
+            <div class="w-100 h-auto bg-white p-4 rounded-3 shadow">
+              <div class="d-flex justify-content-between align-items-center">
+                <p>Subtotal</p>
+                <p id="subtotal"></p>
+              </div>
+              <div
+                class="d-flex justify-content-between align-items-center border-top border-2 pt-3 fredoka-font-medium"
+              >
+                <p class="my-0">Total Payment</p>
+                <p id="total" class="my-0"></p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            id="paymentMethod"
+            class="w-100 d-flex justify-content-between align-items-center btn my-3 bg-white shadow py-3 px-4 rounded-2 text-danger"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            <div
+              class="w-100 d-flex align-items-center gap-3 fredoka-font fs-6 payment-method d-none"
+            >
+              <img
+                src=""
+                alt="payment method"
+                style="width: 50px"
+                class="img-method"
+              />
+              <p class="my-0"></p>
+            </div>
+            <div
+              class="d-flex justify-content-center align-items-center gap-3 fredoka-font fs-6 select-method"
+            >
+              <i class="bi bi-wallet2"></i>
+              <p class="my-0">Select Payment Method</p>
+            </div>
+            <i class="bi bi-chevron-right"></i>
+          </button>
+
+          <div
+            class="modal fade"
+            id="staticBackdrop"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div
+              class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down"
+            >
+              <div class="modal-content">
+                <div class="modal-header border-0">
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div
+                  class="modal-body fredoka-font d-flex flex-column gap-4 px-4 pb-lg-5 mb-4"
+                >
+                  <h2>Select Payment Method</h2>
+                  <div
+                    class="form-check d-flex flex-row-reverse justify-content-between w-100 fs-5 p-0"
+                  >
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      value="QRIS"
+                      id="payment1"
+                    />
+                    <label class="form-check-label" for="payment1">
+                      <img
+                        src="public/payment/qris.png"
+                        alt="qris"
+                        style="width: 50px; margin-right: 10px"
+                      />
+                      QRIS
+                    </label>
+                  </div>
+
+                  <div
+                    class="form-check d-flex flex-row-reverse justify-content-between w-100 fs-5 p-0"
+                  >
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      value="BCA"
+                      id="payment2"
+                    />
+                    <label class="form-check-label" for="payment2">
+                      <img
+                        src="public/payment/bca.png"
+                        alt="bca"
+                        style="width: 50px; margin-right: 10px"
+                      />
+                      BCA
+                    </label>
+                  </div>
+
+                  <div
+                    class="form-check d-flex flex-row-reverse justify-content-between w-100 fs-5 p-0"
+                  >
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      value="BNI"
+                      id="payment3"
+                    />
+                    <label class="form-check-label" for="payment3">
+                      <img
+                        src="public/payment/bni.png"
+                        alt="bni"
+                        style="width: 50px; margin-right: 10px"
+                      />
+                      BNI
+                    </label>
+                  </div>
+
+                  <div
+                    class="form-check d-flex flex-row-reverse justify-content-between w-100 fs-5 p-0"
+                  >
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      value="Gopay"
+                      id="payment4"
+                    />
+                    <label class="form-check-label" for="payment4">
+                      <img
+                        src="public/payment/gopay.png"
+                        alt="gopay"
+                        style="width: 50px; margin-right: 10px"
+                      />
+                      Gopay
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="w-100 d-flex justify-content-center align-items-center mt-3 btn bar-menu bg-dark py-3 px-4 rounded-4 text-light d-flex justify-content-center align-items-center my-0 fredoka-font"
+            type="submit"
+          >
+            Payment
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <script src="assets/checkout.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+  </body>
+</html>

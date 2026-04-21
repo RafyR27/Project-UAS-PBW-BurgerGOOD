@@ -1,0 +1,222 @@
+* {
+  scroll-behavior: smooth;
+}
+
+.bg-cream {
+  background-color: #fffdf0;
+}
+
+.bg-orange {
+  background-color: #ff3737;
+}
+
+.bg-orange-50 {
+  background-color: #ff8383;
+}
+
+.bg-blue {
+  background-color: #89d4ff;
+}
+
+.bg-gold {
+  background-color: #ffc300;
+}
+
+.bg-grey {
+  background-color: #f9f8f6;
+}
+
+.text-gold {
+  color: #ffd400;
+}
+
+.big-font {
+  font-size: 4rem;
+}
+
+.card {
+  width: 400px;
+  height: 460px;
+}
+
+.btn-active {
+  background-color: #ffc300;
+  padding: 5px 15px 5px 15px;
+  border-radius: 10px;
+  border: none;
+}
+
+.btn-active:hover {
+  background-color: #ecb500;
+}
+
+.btn-unactive {
+  background-color: #ffffff;
+  border: 1px solid #ffc300;
+  padding: 5px 15px 5px 15px;
+  border-radius: 10px;
+}
+
+.btn-unactive:focus {
+  border: 1px solid #ffc300;
+  background-color: #ffffff;
+}
+
+.btn-unactive:hover {
+  background-color: #ebebeb;
+}
+
+.alert-main {
+  width: 25%;
+}
+
+.form-check-input:checked {
+  background-color: #ffc300;
+  border-color: #d97706;
+}
+
+.form-check-input:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.25);
+}
+
+.fredoka-font-bold {
+  font-family: "Fredoka", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.fredoka-font-medium {
+  font-family: "Fredoka", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.fredoka-font {
+  font-family: "Fredoka", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+/* Main menu */
+.hero-section {
+  height: 100vh;
+}
+
+.features-section {
+  height: auto;
+}
+
+/* Menu */
+.hero-menu {
+  height: auto;
+}
+
+.bar-menu {
+  width: 50%;
+}
+
+/* auth */
+.login-section {
+  height: 100vh;
+}
+
+.logo-section {
+  height: 100vh;
+}
+
+.form-input {
+  width: 50%;
+}
+
+@media (width <= 48rem) {
+  .big-font {
+    font-size: 2.8rem;
+  }
+
+  .hero-section {
+    height: auto;
+  }
+
+  .features-section {
+    height: auto;
+  }
+
+  .card {
+    width: 280px;
+    height: 350px;
+  }
+
+  .alert-main {
+    width: 100%;
+  }
+
+  .hero-menu {
+    height: 150px;
+  }
+
+  .bar-menu {
+    width: 100%;
+  }
+
+  .login-section {
+    height: auto;
+  }
+
+  .logo-section {
+    height: auto;
+  }
+
+  .form-input {
+    width: 100%;
+  }
+}
+
+@media (width <= 64rem) {
+  .big-font {
+    font-size: 2.8rem;
+  }
+
+  .hero-section {
+    height: auto;
+  }
+
+  .features-section {
+    height: auto;
+  }
+
+  .card {
+    width: 280px;
+    height: 400px;
+  }
+
+  .alert-main {
+    width: 100%;
+  }
+
+  .hero-menu {
+    height: 150px;
+  }
+
+  .bar-menu {
+    width: 100%;
+  }
+
+  .login-section {
+    height: 100vh;
+  }
+
+  .logo-section {
+    height: auto;
+  }
+
+  .form-input {
+    width: 100%;
+  }
+}
