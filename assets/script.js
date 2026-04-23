@@ -92,3 +92,51 @@ const sendMail = () => {
     alertMail.classList.add("d-none");
   }, 5000);
 };
+
+document.addEventListener("click", function (e) {
+  const deleteBtn = e.target.closest(".btn-delete");
+
+  if (deleteBtn) {
+    const id = deleteBtn.dataset.id;
+    const name = deleteBtn.dataset.name;
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to delete ${name}. This action cannot be undone!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#212529",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "delete-product.php?id=" + id;
+      }
+    });
+  }
+});
+
+const urlParams = new URLSearchParams(window.location.search);
+const status = urlParams.get("status");
+
+if (status) {
+  let config = {
+    icon: "success",
+    timer: 2000,
+    showConfirmButton: false,
+  };
+
+  if (status === "deleted") {
+    config.title = "Deleted!";
+    config.text = "Product has been removed successfully.";
+  } else if (status === "added") {
+    config.title = "Added!";
+    config.text = "New product added successfully.";
+  } else if (status === "updated") {
+    config.title = "Updated!";
+    config.text = "Product updated successfully.";
+  }
+
+  Swal.fire(config);
+  window.history.replaceState({}, document.title, window.location.pathname);
+}

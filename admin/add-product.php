@@ -17,6 +17,13 @@
   $error = false;
   $err_message = "";
 
+  $product_name = "";
+  $description  = "";
+  $stock_large  = "";
+  $stock_small  = "";
+  $category     = "";
+  $price        = "";
+
   if (isset($_POST['addProduct'])) {
       $product_name = htmlspecialchars($_POST['product_name']);
       $description  = htmlspecialchars($_POST['description']);
@@ -64,7 +71,7 @@
               ");
 
               if ($query) {
-                  header("Location: " . $BASE_URL . "admin/dashboard.php");
+                  header("Location: " . $BASE_URL . "admin/dashboard.php?status=added");
                   exit;
               } else {
                   $error = true;
@@ -195,6 +202,7 @@
               name="product_name"
               class="form-control rounded-3"
               placeholder="Enter product name"
+              value="<?= $product_name; ?>" 
             />
           </div>
 
@@ -206,7 +214,7 @@
               rows="4"
               class="form-control rounded-3"
               placeholder="Enter product description"
-            ></textarea>
+            ><?= $description; ?></textarea>
           </div>
 
           <!-- Stok -->
@@ -217,6 +225,8 @@
               name="stock_large"
               class="form-control rounded-3"
               placeholder="Enter stock"
+              value="<?= $stock_large; ?>"
+              min="0"
             />
           </div>
           <div class="mb-3">
@@ -226,6 +236,8 @@
               name="stock_small"
               class="form-control rounded-3"
               placeholder="Enter stock"
+              value="<?= $stock_small; ?>"
+              min="0"
             />
           </div>
 
@@ -234,8 +246,8 @@
             <label class="form-label fredoka-font-medium">Category</label>
             <select name="category" class="form-select rounded-3">
               <option value="">Select category</option>
-              <option value="makanan">Makanan</option>
-              <option value="minuman">Minuman</option>
+              <option value="makanan" <?= $category == 'makanan' ? 'selected' : ''; ?>>Makanan</option>
+              <option value="minuman" <?= $category == 'minuman' ? 'selected' : ''; ?>>Minuman</option>
             </select>
           </div>
 
@@ -247,6 +259,8 @@
               name="price"
               class="form-control rounded-3"
               placeholder="Enter price"
+              value="<?= $price; ?>"
+              min="0"
             />
           </div>
 
@@ -271,6 +285,7 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/bootstrap.js"></script>
   </body>
 </html>
