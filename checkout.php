@@ -59,6 +59,19 @@
       </div>
     </div>
 
+    <div class="position-fixed z-3 alert-main end-0 top-0">
+      <div class="p-2">
+        <div
+          id="alert-errorPayment"
+          class="alert alert-danger d-none justify-content-center align-items-center gap-3"
+          role="alert"
+        >
+          <i class="bi bi-exclamation-octagon"></i>
+          <p class="my-0 errorPayment"></p>
+        </div>
+      </div>
+    </div>
+
     <!-- Main -->
     <main
       class="w-100 h-auto px-4 px-lg-5 pt-lg-4 my-1 d-flex flex-column flex-lg-row"

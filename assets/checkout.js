@@ -73,22 +73,14 @@ const getProducts = () => {
 const getProductsDb = async () => {
   const products = getProducts();
 
-  if (products.length === 0) {
-    window.location.href = "menu.php";
-    return [];
-  }
-
   try {
-    const response = await fetch(
-      "http://localhost/burgergood/controller/checkStock.php",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(products),
+    const response = await fetch("controller/checkStock.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify(products),
+    });
 
     const data = await response.json();
     return data;
@@ -222,12 +214,14 @@ myModal.addEventListener("hidden.bs.modal", () => {
 
 document
   .getElementById("checkoutForm")
-  .addEventListener("submit", function (e) {
+  .addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const formData = Object.fromEntries(new FormData(this).entries());
 
     const alertMethod = document.getElementById("alert-payment");
+    const alertErrorPayment = document.getElementById("alert-errorPayment");
+    const errorPayment = alertErrorPayment.querySelector(".errorPayment");
 
     let hasError = false;
 
@@ -259,10 +253,32 @@ document
       cart: JSON.parse(localStorage.getItem("cart")) || [],
     };
 
-    console.log(data);
+    try {
+      const response = await fetch("controller/payment.php", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    fetch("payment.php", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+      const result = await response.json();
+
+      if (result.success) {
+        alertErrorPayment.classList.remove("d-flex");
+        alertErrorPayment.classList.add("d-none");
+
+        localStorage.removeItem("cart");
+
+        window.location.href = `success.php?order_id=${order_id}`;
+      } else {
+        alertErrorPayment.classList.remove("d-none");
+        alertErrorPayment.classList.add("d-flex");
+        errorPayment.innerText = result.message;
+      }
+    } catch (error) {
+       alertErrorPayment.classList.remove("d-none");
+       alertErrorPayment.classList.add("d-flex");
+       errorPayment.innerText = error.message;
+    }
   });

@@ -169,7 +169,7 @@
           <form action="dashboard.php" method="GET" class="d-flex gap-2">
             <input type="hidden" name="category" value="<?= $category_filter ?>">
             
-            <div class="input-group shadow-sm">
+            <div class="input-group">
               <span class="input-group-text bg-white border-end-0 rounded-start-pill px-3">
                 <i class="bi bi-search text-muted"></i>
               </span>
@@ -194,15 +194,15 @@
       <div class="mb-4 d-flex gap-2">
         <a href="dashboard.php?category=all&search=<?= urlencode($search) ?>" 
           class="btn btn-sm <?= $category_filter == 'all' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-3">
-          Semua
+          All
         </a>
         <a href="dashboard.php?category=makanan&search=<?= urlencode($search) ?>" 
           class="btn btn-sm <?= $category_filter == 'makanan' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-3">
-          Makanan
+          Food
         </a>
         <a href="dashboard.php?category=minuman&search=<?= urlencode($search) ?>" 
           class="btn btn-sm <?= $category_filter == 'minuman' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-3">
-          Minuman
+          Drink
         </a>
       </div>
       
