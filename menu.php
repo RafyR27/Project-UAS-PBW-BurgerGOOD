@@ -11,11 +11,24 @@
   $table_number = $_SESSION['table_number'];
   $outlet_code = $_SESSION['outlet_code'];
 
+  $category_filter = isset($_GET['category']) ? $_GET['category'] : 'all';
+  $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+
+  $sql = "SELECT * FROM product 
+    WHERE outlet_code = '$outlet_code'
+    AND (stock_large > 0 OR stock_small > 0)";
+
+  if ($category_filter !== 'all') {
+    $sql .= " AND category = '$category_filter'";
+  }
+
+  if ($search !== '') {
+    $sql .= " AND product_name LIKE '%$search%'";
+  }
+
   $query_products = mysqli_query(
-      $conn,
-      "SELECT * FROM product 
-      WHERE outlet_code = '$outlet_code'
-      AND (stock_large > 0 OR stock_small > 0)"
+    $conn,
+    $sql
   );
 ?>
 
@@ -73,13 +86,43 @@
     <section
       class="w-100 px-4 px-lg-5 my-3 d-flex flex-column justify-content-center align-items-center gap-3"
     >
-      <div class="w-100 h-auto d-flex gap-2 text-dark fredoka-font">
-        <span class="px-4 py-2 btn-active">
-          <p class="my-0">Burger</p>
-        </span>
-        <span class="px-4 py-2 btn-unactive">
-          <p class="my-0">Drink</p>
-        </span>
+      <div class="w-100 d-flex flex-lg-row-reverse flex-column">
+        <form action="" method="GET" class="d-flex gap-2 form-input mb-3 mb-lg-0">
+          <input type="hidden" name="category" value="<?= $category_filter ?>">
+          
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 rounded-start-pill px-3">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input 
+              type="text" 
+              name="search" 
+              class="form-control border-start-0 rounded-end-pill py-2" 
+              placeholder="Search products..." 
+              value="<?= htmlspecialchars($search) ?>"
+            >
+          </div>
+          
+          <?php if($search !== ''): ?>
+            <a href="menu.php?category=<?= $category_filter ?>" class="btn btn-light rounded-circle shadow-sm">
+              <i class="bi bi-x-lg"></i>
+            </a>
+          <?php endif; ?>
+        </form>
+        <div class="w-100 d-flex gap-2 text-dark fredoka-font">
+          <a href="menu.php?category=all" 
+            class="btn btn-sm <?= $category_filter == 'all' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-4 py-2 d-flex justify-content-center align-items-center">
+            All
+          </a>
+          <a href="menu.php?category=makanan" 
+            class="btn btn-sm <?= $category_filter == 'makanan' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-4 py-2 d-flex justify-content-center align-items-center">
+            Food
+          </a>
+          <a href="menu.php?category=minuman" 
+            class="btn btn-sm <?= $category_filter == 'minuman' ? 'btn-dark' : 'btn-outline-dark' ?> rounded-pill px-4 py-2 d-flex justify-content-center align-items-center">
+            Drink
+          </a>
+        </div>
       </div>
 
       <div class="container-fluid" style="margin-bottom: 100px">
@@ -88,71 +131,80 @@
           class="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-3"
         >
           <!-- Menu card -->
-          <?php while($product = mysqli_fetch_assoc($query_products)): ?>
-            <div class="col menu-card" data-name="<?= $product['product_name']; ?>">
-              <div class="h-auto bg-light shadow-lg rounded d-flex justify-content-start align-items-center gap-3"
-                  style="padding: 20px 25px;">
-                <img
-                  src="data:image/jpeg;base64,<?= base64_encode($product['image']); ?>"
-                  alt="<?= $product['product_name']; ?>"
-                  class="object-fit-contain"
-                  style="width: 100px"
-                />
-                <div class="w-100 d-flex flex-column justify-content-center align-items-start gap-1">
-                  <p class="fredoka-font-bold my-0 productName"><?= $product['product_name']; ?></p>
-                  <p class="fredoka-font my-0" style="font-size: 0.8rem">
-                    <?= $product['description']; ?>
-                  </p>
-                  <div class="w-100 d-flex flex-column flex-md-row flex-lg-row justify-content-between align-items-lg-center align-items-end mt-3">
-                    <p class="my-0 fredoka-font w-100">
-                      Rp. <?= number_format($product['price']); ?>
+          <?php if(mysqli_num_rows($query_products) > 0): ?>
+            <?php while($product = mysqli_fetch_assoc($query_products)): ?>
+              <div class="col menu-card" data-name="<?= $product['product_name']; ?>">
+                <div class="h-auto bg-light shadow-lg rounded d-flex justify-content-start align-items-center gap-3"
+                    style="padding: 20px 25px;">
+                  <img
+                    src="data:image/jpeg;base64,<?= base64_encode($product['image']); ?>"
+                    alt="<?= $product['product_name']; ?>"
+                    class="object-fit-contain"
+                    style="width: 100px"
+                  />
+                  <div class="w-100 d-flex flex-column justify-content-center align-items-start gap-1">
+                    <p class="fredoka-font-bold my-0 productName"><?= $product['product_name']; ?></p>
+                    <p class="fredoka-font my-0" style="font-size: 0.8rem">
+                      <?= $product['description']; ?>
                     </p>
-                    <div
-                        class="w-100 d-flex justify-content-end align-items-center gap-3 mt-3 mt-md-2 mt-lg-0 d-none btn-card"
-                      >
-                        <button
-                          type="button"
-                          class="btn rounded-5 btn-unactive"
-                          style="padding: 6px 9px"
-                          onclick="delCountCard('<?= $product['product_name']; ?>')"
+                    <div class="w-100 d-flex flex-column flex-md-row flex-lg-row justify-content-between align-items-lg-center align-items-end mt-3">
+                      <p class="my-0 fredoka-font w-100">
+                        Rp. <?= number_format($product['price']); ?>
+                      </p>
+                      <div
+                          class="w-100 d-flex justify-content-end align-items-center gap-3 mt-3 mt-md-2 mt-lg-0 d-none btn-card"
                         >
-                          <i class="bi bi-dash"></i>
-                        </button>
-                        <p class="my-0 quantity"></p>
-                        <button
-                          type="button"
-                          class="btn rounded-5 btn-unactive"
-                          style="padding: 6px 9px"
-                          onclick="addCountCard('<?= $product['product_name']; ?>', <?= $product['stock_large']; ?>, <?= $product['stock_small']; ?>)"
-                        >
-                          <i class="bi bi-plus"></i>
-                        </button>
-                      </div>
+                          <button
+                            type="button"
+                            class="btn rounded-5 btn-unactive"
+                            style="padding: 6px 9px"
+                            onclick="delCountCard('<?= $product['product_name']; ?>')"
+                          >
+                            <i class="bi bi-dash"></i>
+                          </button>
+                          <p class="my-0 quantity"></p>
+                          <button
+                            type="button"
+                            class="btn rounded-5 btn-unactive"
+                            style="padding: 6px 9px"
+                            onclick="addCountCard('<?= $product['product_name']; ?>', <?= $product['stock_large']; ?>, <?= $product['stock_small']; ?>)"
+                          >
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </div>
 
-                    <button
-                      type="button"
-                      class="btn rounded-5 btn-active btn-detail mt-2 mt-lg-0"
-                      style="padding: 6px 10px"
-                      data-bs-toggle="modal"
-                      data-bs-target="#staticBackdrop"
-                      onclick='showDetail(
-                        "<?= htmlspecialchars($product["product_name"]) ?>",
-                        "<?= htmlspecialchars($product["description"]) ?>",
-                        "<?= base64_encode($product["image"]) ?>",
-                        <?= $product["price"] ?>,
-                        <?= $product["stock_small"] ?>,
-                        <?= $product["stock_large"] ?>
-                      )'
-                      data-name="<?= $product['product_name']; ?>"
-                      data-price=<?= $product['price']; ?>
-                    >
-                      <i class="bi bi-plus"></i>
-                    </button>
+                      <button
+                        type="button"
+                        class="btn rounded-5 btn-active btn-detail mt-2 mt-lg-0"
+                        style="padding: 6px 10px"
+                        data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"
+                        onclick='showDetail(
+                          "<?= htmlspecialchars($product["product_name"]) ?>",
+                          "<?= htmlspecialchars($product["description"]) ?>",
+                          "<?= base64_encode($product["image"]) ?>",
+                          <?= $product["price"] ?>,
+                          <?= $product["stock_small"] ?>,
+                          <?= $product["stock_large"] ?>
+                        )'
+                        data-name="<?= $product['product_name']; ?>"
+                        data-price=<?= $product['price']; ?>
+                      >
+                        <i class="bi bi-plus"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+            <?php endwhile; ?>
+          <?php else: ?>
+            <div class="col-12 text-center py-5 w-100">
+              <i class="bi bi-search fs-1 text-muted"></i>
+              <h4 class="mt-3 fredoka-font text-muted">
+                <?= ($search !== '') ? "No products match '$search'" : "No products found in this category." ?>
+              </h4>
             </div>
-          <?php endwhile; ?>
+          <?php endif; ?>
         </div>
       </div>
     </section>

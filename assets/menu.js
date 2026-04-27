@@ -15,6 +15,7 @@ let type = "small";
 document.addEventListener("DOMContentLoaded", function () {
   addProduct = JSON.parse(localStorage.getItem("cart")) || [];
 
+
   const detailButtons = document.querySelectorAll(".btn-detail");
 
   detailButtons.forEach((button) => {
@@ -96,7 +97,7 @@ function showDetail(name, description, image, price, stockSmall, stockLarge) {
       <div class="form-check fredoka-font w-100">
         <input class="form-check-input" type="radio" name="size" id="sizeSmall" value="small" checked>
         <label class="form-check-label d-flex justify-content-between w-100" for="sizeSmall">
-          <p>Small</p>
+          <p>Small | Stock : ${stock_small}</p>
           <p>Free</p>
         </label>
       </div>
@@ -108,7 +109,7 @@ function showDetail(name, description, image, price, stockSmall, stockLarge) {
       <div class="form-check fredoka-font w-100">
         <input class="form-check-input" type="radio" name="size" id="sizeLarge" value="large">
         <label class="form-check-label d-flex justify-content-between w-100" for="sizeLarge">
-          <p>Large</p>
+          <p>Large | Stock : ${stock_large}</p>
           <p>+ Rp. 10.000</p>
         </label>
       </div>
@@ -177,6 +178,7 @@ const addCountCard = (name, stockLarge, stockSmall) => {
       return item;
     });
 
+    localStorage.setItem("cart", JSON.stringify(addProduct));
     updateCartDisplay();
   }
 };
@@ -199,6 +201,7 @@ const delCountCard = (name) => {
       })
       .filter((item) => item.quantity > 0);
 
+    localStorage.setItem("cart", JSON.stringify(addProduct));
     updateCartDisplay();
   }
 };
@@ -246,11 +249,7 @@ const updateCartDisplay = () => {
 btnAddCard.addEventListener("click", () => {
   addProduct.push(selectedData);
 
-  updateCartDisplay();
-});
-
-const btnCheckout = document.getElementById("btn-checkout");
-
-btnCheckout.addEventListener("click", () => {
   localStorage.setItem("cart", JSON.stringify(addProduct));
+
+  updateCartDisplay();
 });
