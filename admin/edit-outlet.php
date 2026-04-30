@@ -1,38 +1,38 @@
 <?php
-session_start();
-require "../config/db.php";
+    session_start();
+    require "../config/db.php";
 
-if (!isset($_SESSION["id"]) || $_SESSION["role"] !== "admin") {
-    header("Location: " . $BASE_URL . "auth.php");
-    exit;
-}
+    if (!isset($_SESSION["id"]) || $_SESSION["role"] !== "admin") {
+        header("Location: " . $BASE_URL . "auth.php");
+        exit;
+    }
 
-$outlet_code = $_SESSION['outlet_code'];
+    $outlet_code = $_SESSION['outlet_code'];
 
-$query = mysqli_query($conn, "SELECT * FROM outlet WHERE outlet_code = '$outlet_code'");
-$outlet = mysqli_fetch_assoc($query);
+    $query = mysqli_query($conn, "SELECT * FROM outlet WHERE outlet_code = '$outlet_code'");
+    $outlet = mysqli_fetch_assoc($query);
 
-$error = false;
-$err_message = "";
+    $error = false;
+    $err_message = "";
 
-if (isset($_POST['updateOutlet'])) {
-    $total_tables = htmlspecialchars($_POST['total_tables']);
+    if (isset($_POST['updateOutlet'])) {
+        $total_tables = htmlspecialchars($_POST['total_tables']);
 
-    if (empty($total_tables) || $total_tables < 1) {
-        $error = true;
-        $err_message = "Please enter a valid number of seats (minimum 1).";
-    } else {
-        $update = mysqli_query($conn, "UPDATE outlet SET total_tables = '$total_tables' WHERE outlet_code = '$outlet_code'");
-
-        if ($update) {
-            header("Location: dashboard.php");
-            exit;
-        } else {
+        if (empty($total_tables) || $total_tables < 1) {
             $error = true;
-            $err_message = "Failed to update outlet data.";
+            $err_message = "Please enter a valid number of seats (minimum 1).";
+        } else {
+            $update = mysqli_query($conn, "UPDATE outlet SET total_tables = '$total_tables' WHERE outlet_code = '$outlet_code'");
+
+            if ($update) {
+                header("Location:" . $BASE_URL . "admin/dashboard.php");
+                exit;
+            } else {
+                $error = true;
+                $err_message = "Failed to update outlet data.";
+            }
         }
     }
-}
 ?>
 
 <!doctype html>
