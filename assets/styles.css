@@ -104,6 +104,27 @@
   font-variation-settings: "wdth" 100;
 }
 
+.order-list-wrapper {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.order-list-wrapper::-webkit-scrollbar {
+  width: 5px;
+}
+
+.order-list-wrapper::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.order-list-wrapper::-webkit-scrollbar-thumb {
+  background: #ffc300; 
+  border-radius: 10px;
+}
+
 /* Main menu */
 .hero-section {
   height: 100vh;

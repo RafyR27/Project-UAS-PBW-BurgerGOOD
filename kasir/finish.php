@@ -3,14 +3,18 @@
     require "../config/db.php";
 
     if( !isset($_SESSION["id"]) ){
-        header("location: " . $BASE_URL . 'auth.php');
+        header("Location: " . $BASE_URL . 'auth.php');
         exit;
     }
 
     if ($_SESSION['role'] === "admin") {
-        header("location: " . $BASE_URL . 'admin/dashboard.php');
+        header("Location: " . $BASE_URL . 'admin/dashboard.php');
         exit;
     }
+
+    $outlet_code = $_SESSION['outlet_code'];
+
+    $query_orders = mysqli_query($conn, "SELECT * FROM checkout WHERE outlet_code = '$outlet_code' AND status = 'finished' ORDER BY created_at DESC");
 ?>
 
 <!doctype html>
@@ -103,7 +107,7 @@
       <!-- Outlet code -->
       <div class="d-flex justify-content-end mb-4">
         <div class="bg-dark text-white px-4 py-2 rounded-4 fredoka-font-medium">
-          Outlet: BRG-1024
+          Outlet: <?= $outlet_code; ?>
         </div>
       </div>
 
@@ -113,81 +117,80 @@
       </div>
 
       <!-- Finished order list -->
-      <div class="row g-4">
-        <div class="col-lg-4 col-md-6">
-          <div class="bg-white rounded-4 shadow-sm p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="fredoka-font-medium mb-0">Table 05</h4>
-              <span class="badge text-bg-success px-3 py-2">Finished</span>
+      <div class="row g-4 d-flex">
+        <?php if(mysqli_num_rows($query_orders) > 0): ?>
+          <?php while($order = mysqli_fetch_assoc($query_orders)): ?>
+            <div class="col-lg-4 col-md-6">
+              <div class="bg-white rounded-4 shadow-sm p-4 h-100 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <h4 class="fredoka-font-medium mb-0">Table <?= str_pad($order['table_number'], 2, '0', STR_PAD_LEFT); ?></h4>
+                  <span class="badge text-bg-success px-3 py-2 text-capitalize"><?= $order['status']; ?></span>
+                </div>
+                <small class="text-muted mb-3 d-block">Order ID: <?= $order['order_id']; ?></small>
+
+                <div class="order-list-wrapper flex-grow-1">
+                  <?php 
+                    $order_id = $order['order_id'];
+                    $query_items = mysqli_query($conn, "
+                      SELECT oi.*, p.price 
+                      FROM order_items oi 
+                      LEFT JOIN product p ON oi.product_name = p.product_name COLLATE utf8mb4_general_ci
+                      WHERE oi.order_id = '$order_id'
+                    ");
+
+                    while($item = mysqli_fetch_assoc($query_items)):
+                      $unit_price = $item['price'];
+                      if ($item['size'] === 'large') {
+                        $unit_price += 10000;
+                      }
+                      $subtotal_item = $unit_price * $item['quantity'];
+                  ?>
+                    <div class="mb-3 pb-2 border-bottom border-light">
+                     <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                      <p class="mb-0 fredoka-font-medium"><?= $item['product_name']; ?></p>
+                        <small class="text-muted text-capitalize"><?= $item['size']; ?> (Rp <?= number_format($unit_price, 0, ',', '.'); ?>)</small>
+                      </div>
+                      <div class="text-end d-flex flex-column align-items-end">
+                        <span class="fredoka-font-medium">x<?= $item['quantity']; ?></span>
+                        <small class="fredoka-font-medium">Rp <?= number_format($subtotal_item, 0, ',', '.'); ?></small>
+                      </div>
+                    </div>
+                  </div>
+                  <?php endwhile; ?>
+                </div>
+
+                <div class="mt-auto pt-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <p class="fredoka-font-medium mb-0 text-muted" style="font-size: 0.85rem;">Payment Method:</p>
+                    <span class="badge bg-light text-dark border fredoka-font" style="font-size: 0.75rem;">
+                      <i class="bi bi-wallet2 me-1"></i> <?= $order['payment_method']; ?>
+                    </span>
+                  </div>
+
+                  <div class="d-flex justify-content-between mt-auto mb-3">
+                    <p class="fredoka-font-medium mb-0">Total Paid:</p>
+                    <p class="fredoka-font-bold mb-0 text-success">Rp <?= number_format($order['total_price'], 0, ',', '.'); ?></p>
+                  </div>
+                </div>
+
+                <button class="btn btn-outline-success w-100 rounded-3 py-2 fw-semibold" disabled>
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  Completed
+                </button>
+              </div>
             </div>
-
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-2">
-                <div>
-                  <p class="mb-0 fredoka-font-medium">Cheese Burger</p>
-                  <small class="text-muted">Regular</small>
-                </div>
-                <span>x2</span>
-              </div>
-
-              <div class="d-flex justify-content-between mb-2">
-                <div>
-                  <p class="mb-0 fredoka-font-medium">French Fries</p>
-                  <small class="text-muted">Large</small>
-                </div>
-                <span>x1</span>
-              </div>
-
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="mb-0 fredoka-font-medium">Iced Tea</p>
-                  <small class="text-muted">Medium</small>
-                </div>
-                <span>x2</span>
-              </div>
-            </div>
-
-            <button class="btn btn-outline-success w-100 rounded-3" disabled>
-              <i class="bi bi-check-circle-fill me-2"></i>
-              Completed
-            </button>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div class="col-12 text-center py-5">
+            <i class="bi bi-check2-circle fs-1 text-muted"></i>
+            <h4 class="mt-3 fredoka-font text-muted">No finished orders yet</h4>
           </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-          <div class="bg-white rounded-4 shadow-sm p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="fredoka-font-medium mb-0">Table 08</h4>
-              <span class="badge text-bg-success px-3 py-2">Finished</span>
-            </div>
-
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-2">
-                <div>
-                  <p class="mb-0 fredoka-font-medium">Double Burger</p>
-                  <small class="text-muted">Large</small>
-                </div>
-                <span>x1</span>
-              </div>
-
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="mb-0 fredoka-font-medium">Cola</p>
-                  <small class="text-muted">Regular</small>
-                </div>
-                <span>x2</span>
-              </div>
-            </div>
-
-            <button class="btn btn-outline-success w-100 rounded-3" disabled>
-              <i class="bi bi-check-circle-fill me-2"></i>
-              Completed
-            </button>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
 
     <script src="../assets/js/bootstrap.js"></script>
+    <script src="../assets/script.js"></script>
   </body>
 </html>

@@ -135,6 +135,9 @@ if (status) {
   } else if (status === "updated") {
     config.title = "Updated!";
     config.text = "Product updated successfully.";
+  } else if (status === "completed") {
+    config.title = "Order Completed!";
+    config.text = "The order has been finished.";
   }
 
   Swal.fire(config);

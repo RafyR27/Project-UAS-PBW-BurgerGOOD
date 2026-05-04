@@ -6,7 +6,7 @@
 
     $conn = mysqli_connect($host, $user, $pass, $db);
 
-    $BASE_URL = "http://localhost/burgergood/";
+    $BASE_URL = "http://localhost/Project-UAS-PBW-BurgerGOOD/";
 
     if(!$conn){
         die("Koneksi gagal: " . mysqli_connect_error());
