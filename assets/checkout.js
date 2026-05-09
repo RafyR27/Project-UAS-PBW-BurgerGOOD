@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   src="data:image/jpeg;base64,${item.image}"
                   alt="${item.name}"
                   class="object-fit-contain"
-                  style="width: 80px"
+                  style="width: 80px; height: 100px;"
                 />
                 <div
                   class="w-100 d-flex flex-column justify-content-center align-items-start gap-1"
@@ -170,7 +170,7 @@ const delCountCard = (name) => {
   localStorage.setItem("cart", JSON.stringify(products));
 
   if (products.length === 0) {
-    window.location.href = "menu.html";
+    window.location.href = "menu.php";
   } else {
     updateCartDisplay();
   }

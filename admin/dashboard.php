@@ -31,6 +31,14 @@
 
     $query_outlet = mysqli_query($conn, "SELECT * FROM outlet WHERE outlet_code = '$outlet_code'");
 
+    $omset = mysqli_query($conn, "
+        SELECT SUM(total_price) AS total_omset 
+        FROM checkout 
+        WHERE outlet_code = '$outlet_code'
+    ");
+
+    $data_omset = mysqli_fetch_assoc($omset);
+
     $outlet = mysqli_fetch_assoc($query_outlet);
 ?>
 
@@ -162,7 +170,25 @@
             </div>
           </div>
         </div>
+
+        <div class="col-md-6">
+          <div class="bg-white rounded-4 shadow-sm p-4">
+            <div class="d-flex align-items-center gap-3">
+              <div
+                class="bg-warning rounded-circle d-flex justify-content-center align-items-center"
+                style="width: 55px; height: 55px"
+              >
+                <i class="bi bi-wallet"></i>
+              </div>
+              <div>
+                <p class="mb-1 text-muted">Total Pendapatan</p>
+                <h4 class="mb-0 fredoka-font-medium">Rp. <?= number_format($data_omset['total_omset']) ?></h4>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      
 
       <div class="row mb-4">
         <div class="col-md-6 col-lg-4">
@@ -216,7 +242,7 @@
                   <img
                     src="data:image/jpeg;base64,<?= base64_encode($product['image']); ?>"
                     alt="<?= $product['product_name']; ?>"
-                    style="width: 110px"
+                    style="width: 110px; height: 110px;"
                     class="object-fit-contain"
                   />
 

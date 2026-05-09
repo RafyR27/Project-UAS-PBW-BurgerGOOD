@@ -140,7 +140,7 @@
                     src="data:image/jpeg;base64,<?= base64_encode($product['image']); ?>"
                     alt="<?= $product['product_name']; ?>"
                     class="object-fit-contain"
-                    style="width: 100px"
+                    style="width: 100px; height: 120px"
                   />
                   <div class="w-100 d-flex flex-column justify-content-center align-items-start gap-1">
                     <p class="fredoka-font-bold my-0 productName"><?= $product['product_name']; ?></p>
