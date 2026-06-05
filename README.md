@@ -169,4 +169,4 @@ Project-UAS-PBW-BurgerGOOD/
 
 ## Link Video Presentasi Project
 
-> _Link video presentasi belum tersedia_
+> [_Video presentasi_](https://drive.google.com/file/d/1CjxA_Ix82dvUJH3VgiyKTYonSz-QMfdn/view?usp=drivesdk)
